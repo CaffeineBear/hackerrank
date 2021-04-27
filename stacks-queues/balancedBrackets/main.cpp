@@ -18,26 +18,26 @@ string isBalanced(string s) {
     bracketDict['['] = ']';
     bracketDict['('] = ')';
 
-    deque<char> bracketsQueue;
+    deque<char> bracketsStack;
     for(char c : s){
         if(isOpening(c)){
-            bracketsQueue.push_back(c);
+            bracketsStack.push_back(c);
             continue;
         }
         if(isClosing(c)){
-            if(bracketsQueue.size() == 0){
+            if(bracketsStack.size() == 0){
                 result = "NO";
                 break;
             }
-            char poppedBracket = bracketsQueue.back();
+            char poppedBracket = bracketsStack.back();
             if(c != bracketDict[poppedBracket]){
                 result = "NO";
                 break;
             }
-            bracketsQueue.pop_back();
+            bracketsStack.pop_back();
         }
     }
-    if(bracketsQueue.size() != 0){
+    if(bracketsStack.size() != 0){
         result = "NO";
     }
     return result;
