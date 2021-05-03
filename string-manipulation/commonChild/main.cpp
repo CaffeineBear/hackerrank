@@ -3,26 +3,6 @@
 
 using namespace std;
 
-void removeUncommon(
-    string & s1, string & s2, int (&s1Counter)[256], int (&s2Counter)[256],
-    string & filteredS1, string & filteredS2
-){
-  for( char c : s1 ){
-    s1Counter[c]++;
-  }
-  for( char c : s2 ){
-    if(s1Counter[c] > 0){
-      filteredS2 += c;
-      s2Counter[c]++;
-    }
-  }
-  for( char c : s1 ){
-    if(s2Counter[c] > 0){
-      filteredS1 += c;
-    }
-  }
-}
-
 /*
  * Complete the 'commonChild' function below.
  *
@@ -31,53 +11,41 @@ void removeUncommon(
  *  1. STRING s1
  *  2. STRING s2
  */
-
 int commonChild(string s1, string s2) {
   // unordered<char, int> s1Counter;
-  int s1Counter[256] = {0};
-  int s2Counter[256] = {0};
-  string filteredS2;
-  string filteredS1;
-  
-  removeUncommon(s1, s2, s1Counter, s2Counter, filteredS1, filteredS2);
-  cout << filteredS1 << endl;
-  cout << filteredS2 << endl;
-
-
-  unordered_map<char, vector<int> > s1CharMap;
-  for (int i = 0; i < filteredS1.size(); ++i) {
-    char currChar = filteredS1[i];
-    s1CharMap[currChar].push_back(i);
-  }
-  
-  //for (auto it = s1CharMap.begin(); it != s1CharMap.end(); ++it) {
-  for (int i = 0; i < filteredS2.size(); ++i) {
-    char currChar = filteredS2[i];
-    auto it = s1CharMap.find(currChar); 
-    if(it == s1CharMap.end()){
-      continue;
-    }
-    int prevPos = *it[0];
-    string currCombo;
-    currCombo += currChar;
-    for(int j =  i + 1; j < filteredS2.size(); ++j){
-      char nextChar = filteredS2[i];
-      auto it2 = s1CharMap.find(currChar); 
-      if(it2 == s1CharMap.end()){
+  int result = 0;
+  int N = s1.size();
+  int M = s2.size();
+  vector<vector<int>> C(N+1, vector<int>(M+1));
+  for (int i = 0; i < s1.size(); ++i) {
+    for (int j = 0; j < s2.size(); ++j) {
+      if(s1[i] == s2[j]){
+        C[i+1][j+1] = C[i][j] + 1;
         continue;
       }
-      int found = -1;
-      for(int k : *it2){
-        if( k > prevPos){
-          found = k;
-        }
-      }
-
-
+      C[i+1][j+1] = max(C[i+1][j], C[i][j+1]);
     }
-    cout << currCombo << endl;
   }
-  return 0;
+  // cout << " ";
+  // cout << "     ";
+  // for (int j = 0; j < M + 1; ++j) {
+  //   cout << s2[j] << " ";
+  // }
+  // cout << endl;
+  // for (int i = 0; i < N + 1; ++i) {
+  //   for (int j = 0; j < M + 1; ++j) {
+  //     if(j == 0 && i == 0){
+  //       cout << " ";
+  //       cout << " : ";
+  //     }
+  //     if(j == 0 && i > 0){
+  //       cout << s1[i-1] << " : ";
+  //     }
+  //     cout << C[i][j] << " ";
+  //   }
+  //   cout << endl;
+  // }
+  return C[N][M];
 }
 
 int main()
